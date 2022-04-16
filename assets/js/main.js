@@ -229,13 +229,14 @@ $( document ).ready(function() {
 
         List.getItem().forEach(item => {
             console.log(item.getImg());
-            var column = `<tr class='btn-itemInList' data-id='${item.getId()}' data-id-father='${item.getFatherId()}'><td style='width: 30%;'>`;
+            var column = `<tr class='btn-itemInList' data-id='${item.getId()}' data-id-father='${item.getFatherId()}'`;
             if(item.getImg() != undefined){
-                column +=`<img src='${item.getImg()}'`;
+                column += `><td style='background-image: url(${item.getImg()}); width: 15%; padding: 0.5%; background-repeat: no-repeat; background-size: contain; background-position: center;'>`;
+                ;
             } else {
-                column +=`<img src='https://cdn-icons-png.flaticon.com/512/1312/1312307.png'`;
+                column += `><td style='background-image: url(https://cdn-icons-png.flaticon.com/512/1312/1312307.png); width: 15%; padding: 0.5%; background-repeat: no-repeat; background-size: contain; background-position: center;'>`;
             }
-            column += `alt='Item default'></td><td> ${item.getName()} </td><td> ${item.getAmount()}   
+            column += `</td><td> ${item.getName()} </td><td> ${item.getAmount()}   
             </td><td><img id='iconEye' src='./assets/img/eye.png' alt='Check Icon'><img id='iconCheck' class='d-none' src='./assets/img/check.png' alt='Check Icon'></td></tr>`;
 
             $( "#itemsHere" ).append(column); //<- The new one first
