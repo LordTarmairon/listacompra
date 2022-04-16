@@ -1,0 +1,57 @@
+main {
+    width: 100%;
+    margin: 0 auto;
+}
+article {
+    margin: 2% auto;
+    margin-top: 5%;
+}
+.card-img-top {
+    width: 55%;
+    margin: auto;
+}
+.card-title {
+    font-style: italic;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+.error {
+    border: 2px solid red;
+}
+footer {
+    width: 100%;
+    padding: 5%;
+    background-color: rgb(199, 199, 199);
+}
+
+#errorName, #errorDes{
+    display: none;
+}
+
+label {
+    font-weight: bold;
+}
+
+.card-color{
+    background-color: rgba(82, 255, 91, 0.63);
+}
+table img {
+    width: 55%;
+}
+/* Adding transformation when the button is active */
+#newList:active {
+    transform: scale(0.98);
+    border-radius: 10px;
+    box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+}
+#iconCheck, #iconEye {
+    margin: auto;
+}
+
+.disabled {
+    background-color: grey;
+    opacity: 30%;
+}

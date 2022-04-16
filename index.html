@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shopping List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/vendor/toastr/toastr.css">
+    <link rel="stylesheet" href="./assets/css/styles.css">
+</head>
+<body>
+    <nav></nav>
+    <header></header>
+    <main class="container">
+        <section id="listContainer" class="row">
+
+            <article id="noLists" class="text-center">
+                <h2 class="bg-warning p-1">You haven't Shopping List.</h2>
+                <p>
+                    You can create a New Shopping List
+                </p>
+            </article>
+            
+            <article class="card border-0" style="width: 15rem;">
+                <aside class="text-center">
+                    <img class="card-img-top" id="newList" src="./assets/img/newList.png" class="card-img-top" title="Create a New Shopping List" alt="New Shopping List">
+                </aside>
+            </article>
+        </section>
+    </main>
+    <footer class="text-center">
+        Copyright &copy; - Shopping List - JLCG 2022
+    </footer>
+
+    <!-- MODALS -->
+    <section class="modal fade" id="createNewList" tabindex="-1">
+        <article class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header card-color">
+                    <h5 class="modal-title" id="exampleModalLabel">Create New Shopping List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="index.html" method="get">
+                        <div class="mb-3">
+                            <label for="name" class="form-label"> Name: </label>
+                            <input type="text" class="form-control" id="name" placeholder="Shopping List Name..." aria-describedby="emailHelp" required>
+                            <div id="errorName" class="form-text text-danger">You should writing  the Name of the list.</div>
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label"> Description: </label>
+                            <textarea class="form-control" id="description" placeholder="This Shopping List is..." required></textarea>
+                            <div id="errorDes" class="form-text text-danger">You should writing  the Name of the list.</div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-newList" class="btn btn-success">Create Shopping List</button>
+                    <button type="button" id="btn-newList" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="modal fade" style="z-index: 1100;" id="createNewItem" tabindex="-1">
+        <article class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header card-color">
+                    <h5 class="modal-title" id="exampleModalLabel">Create New Item List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="index.html" method="get">
+                        <div class="mb-3">
+                            <label for="productName" class="form-label"> Product: </label>
+                            <input type="text" class="form-control" id="productName" placeholder="Product Name..." aria-describedby="emailHelp" required>
+                            <div id="errorProductName" class="form-text text-danger">You should writing  the Name of the producto.</div>
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="amount" class="form-label"> Amount: </label>
+                            <input type="number" class="form-control" id="amount" placeholder="Amount..." aria-describedby="emailHelp" value="1" min="1s" max="20" required>
+                            <div id="errorAmount" class="form-text text-danger">You should include the amount of the product</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-newItem" data-in="" class="btn btn-success">Create New Product</button>
+                    <button type="button" id="btn-newList" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+
+                </div>
+            </div>
+        </article>
+    </section>
+
+  <!-- Modal List Content -->
+  <div class='modal fade ' id='listContent' data-bs-backdrop='static' data-bs-keyboard='false' tabindex='-1' aria-labelledby='staticBackdropLabel' aria-hidden='true'>
+    <div class='modal-dialog'>
+      <div class='modal-content'>
+        <div class='modal-header'>
+          <h5 class='modal-title' id='listContentTitle'> </h5>
+          <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+        </div>
+        <div class='modal-body'>
+                <div class="col-md-12">
+                    <table class="table text-center table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsHere">
+
+                        </tbody>
+                    </table>
+                </div>
+            <article id='noItems' class='text-center'>
+
+                <h2 class='bg-warning p-1'>This List is Empty.</h2>
+                <p>
+                    You can create a New Item
+                </p>
+            </article>
+            <article class='card border-0' style='width: 15rem;'>
+                <aside class='text-center'>
+                    <img class='card-img-top btn-newItem' src='./assets/img/newList.png' class='card-img-top' title='Create a New Shopping List' alt='New Shopping List'>
+                </aside>
+            </article>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-Clean btn-warning' data-bs-dismiss='modal'>Clean List</button>
+          <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>Close List</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"  ></script>
+    <!-- JQUERY LINK -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="./assets/vendor/toastr/toastr.min.js"></script>
+    <!-- MY JS FILES -->
+    <script src="./assets/js/Item.js"></script>
+    <script src="./assets/js/List.js"></script>
+    <script src="./assets/js/main.js"></script>
+    
+    <script>
+        //localStorage.clear()
+    </script>
+</body>
+</html>
+
