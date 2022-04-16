@@ -105,7 +105,7 @@ $( document ).ready(function() {
         }
     });
 
-    $(document).on("click", ".btn-itemInList", function(){
+    $(document).on("dblclick", ".btn-itemInList", function(){
         $(this).addClass('disabled');
         $("img#iconEye", this).addClass('d-none');
         $("img#iconCheck", this).removeClass('d-none');
