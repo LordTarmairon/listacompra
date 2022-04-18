@@ -18,7 +18,7 @@ $( document ).ready(function() {
                     for(var o = 0; o< LISTS.length; o++){
                         if(LISTS[o].getId() === id){
                             for(var i= 0; i< item.length; i++){
-                                LISTS[o].newItem(new Item(item[i].name, item[i].amount, item[i].img, item[i].id, item[i].fatherId))
+                                LISTS[o].newItem(new Item(item[i].name, item[i].amount, item[i].img, item[i].id, item[i].fatherId, item[i].price))
                             }
                             break;
                         }
@@ -124,7 +124,30 @@ $( document ).ready(function() {
         saveJson(idPadre, list);
         
     });
-        
+
+
+var elf = "elf";
+    con = `             <tr>
+    <td> <img src="./assets/img/eye.png" alt=""></td>
+    <td>Ratona</td>
+    <td>${elf}</td>
+    <td>Prosiuta</td>
+</tr>
+<tr>
+    <td><img src="./assets/img/eye.png" alt=""></td>
+    <td>Hola</td>
+    <td>Mamona</td>
+    <td>Loba</td>
+</tr>
+<tr>
+    <td><img src="./assets/img/eye.png" alt=""></td>
+    <td>Suminero</td>
+    <td>Ucorno</td>
+    <td>Lolo</td>
+</tr>`;
+$( "#aqui" ).append(con); //<- The new one first
+    //DATATABLE
+    
     function showLisit(List){
         $('#noItems').addClass("d-block");
         $('#noItems').removeClass("d-none");
@@ -161,6 +184,7 @@ $( document ).ready(function() {
 
         let productName = $("#productName").val();
         let amount = parseInt($("#amount").val());
+        let price = parseInt($("#price").val());
 
         if(productName === ""){
             $("#productName").addClass("error");
@@ -182,7 +206,7 @@ $( document ).ready(function() {
         var list = LISTS.find(element => element.getId() === idList);
         var copyProduct = list.getItem().find(item => item.getName() === productName);
         if(copyProduct == undefined || copyProduct == ''){
-            createItem(productName, amount, idList);
+            createItem(productName, amount, idList, price);
         } else {
             var result = confirm("Already you have a product whit the name: "+productName+" Do you want to add again?");
             if(result){
@@ -195,52 +219,105 @@ $( document ).ready(function() {
         $("#productName").val("");
         $("#amount").val("");
     })
+
+
+    //Show the modal windows with the information about the product 
+    $(document).on("click", ".productAccess", function(){
+        var padre = $(this).attr("data-id-father");
+        var product = $(this).attr("data-id");
+        $("#btn-editProduct").attr("data-id-father", padre);
+        $("#btn-editProduct").attr("data-id", product);
+
+        padre = LISTS.find(element => element.getId() === padre);
+        product = padre.getItem().find(item => item.getId() === product);
+
+        $("#imgProduct").attr("src", product.getImg());
+        $("#titleProducto").html("Edit Product: "+product.getName());
+        $("#nameEdit").val(product.getName());
+        $("#amountEdit").val(product.getAmount());
+        $("#priceEdit").val(product.getPrice());        
+    
+        $("#editProduct").modal("show");
+    });
+
+    $(document).on("click", "#btn-editProduct", function(){
+        $("#editProduct").modal("hide");
+        editItem($(this).attr("data-id"), $(this).attr("data-id-father"), $("#nameEdit").val(), $("#amountEdit").val(), $("#priceEdit").val());
+    });
+
+
+    function editItem(idProduct, idList, name, amount, price,){
+        var father = LISTS.find(element => element.getId() === idList);
+        var product = father.getItem().find(product => product.getId() === idProduct);
+        
+        if(product.getName() !== name){
+            product.setName(name);
+        }
+
+        if(product.getAmount() !== amount){
+            product.setAmount(amount);
+        }
+
+        if(product.getPrice() !== price){
+            product.setPrice(price);
+        }
+        //Update new dates
+        saveJson(idList, father); 
+        pintItems(father);
+    }
     
     //This function will create a Item
-    function createItem(name, amount, idList){
+    function createItem(name, amount, idList, prices){
         var perc; 
         var auxP = 0;
         var img;
+        var price;
 
         $.each(OBJECTLIST, function(indice, objeto){
-            objeto.name
             perc = Math.round(similarity(name, objeto.name)*10000)/100;
 
             if(perc > 50 && perc > auxP){
                 auxP = perc;
                 img = objeto.url;
+                price = objeto.price;
             }
         });
-        
+        if(prices != 0){
+            price = prices;
+        }
         for(var i = 0; i< LISTS.length; i++){
             if(LISTS[i].getId() === idList){
-                LISTS[i].newItem(new Item(name, amount, img, hashGenerator(), idList));
+                LISTS[i].newItem(new Item(name, amount, img, hashGenerator(), idList, price));
                 saveJson(idList, LISTS[i]); 
                 pintItems(LISTS[i]);
                 break;
             }
         }
-
         toastr["success"]("New Product add: "+ name);
     }
 
     function pintItems(List){
         $("#itemsHere").empty();
-
+        var totalPrice = 0;
         List.getItem().forEach(item => {
-            console.log(item.getImg());
+            totalPrice += (item.getPrice() * item.getAmount());
             var column = `<tr class='btn-itemInList' data-id='${item.getId()}' data-id-father='${item.getFatherId()}'`;
             if(item.getImg() != undefined){
-                column += `><td style='background-image: url(${item.getImg()}); width: 15%; padding: 0.5%; background-repeat: no-repeat; background-size: contain; background-position: center;'>`;
-                ;
+                column += `><td style='background-image: url(${item.getImg()}); padding: 0.5%; background-repeat: no-repeat; background-size: contain; background-position: center;'>`;
+                
             } else {
-                column += `><td style='background-image: url(https://cdn-icons-png.flaticon.com/512/1312/1312307.png); width: 15%; padding: 0.5%; background-repeat: no-repeat; background-size: contain; background-position: center;'>`;
+                column += `><td style='background-image: url(https://cdn-icons-png.flaticon.com/512/1312/1312307.png); padding: 0.5%; background-repeat: no-repeat; background-size: contain; background-position: center;'>`;
             }
-            column += `</td><td> ${item.getName()} </td><td> ${item.getAmount()}   
+            column += `</td><td class='productAccess' data-id='${item.getId()}' data-id-father='${item.getFatherId()}'> ${item.getName()} </td><td> ${item.getAmount()}   
             </td><td><img id='iconEye' src='./assets/img/eye.png' alt='Check Icon'><img id='iconCheck' class='d-none' src='./assets/img/check.png' alt='Check Icon'></td></tr>`;
 
             $( "#itemsHere" ).append(column); //<- The new one first
-        });        
+        }); 
+        var finalRow = `<tr class='table-info'><td></td><td colspan='2'>Total Products: </td><td>${List.getItem().length}</td></tr>`;
+        var priceRow = `<tr class='table-primary' ><td></td><td  colspan='2' >Approximate price: </td><td>$${totalPrice.toFixed(2)}</td></tr>`;
+        $( "#itemsHere" ).append(finalRow); //<- The new one first
+        $( "#itemsHere" ).append(priceRow); //<- The new one first
+               
     }
     
     function dropList(id){
@@ -252,6 +329,7 @@ $( document ).ready(function() {
                 if(!result){
                     return;
                 }
+                toastr["warning"]("The list with the name: "+ LISTS[i].getName()+" was deleted.");
                 delete LISTS[i];
                 LISTS.splice(i,1);
                 localStorage.removeItem(id);
@@ -259,7 +337,6 @@ $( document ).ready(function() {
                 if(LISTS.length === 0){
                     $("#noLists").show();
                 }
-                toastr["warning"]("The list with the name: "+ LISTS[i].getName()+" was deleted.");
 
             } else {
                 console.log("it couldn't find the Item with ID: "+ id);
