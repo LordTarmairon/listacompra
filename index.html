@@ -57,7 +57,6 @@
                             <label for="description" class="form-label"> Description: </label>
                             <textarea class="form-control" id="description" placeholder="This Shopping List is..." required></textarea>
                             <div id="errorDes" class="form-text text-danger">You should writing  the Name of the list.</div>
-
                         </div>
                     </form>
                 </div>
@@ -89,11 +88,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="amountEdit" class="form-label"> Amount: </label>
-                            <input type="number" class="form-control" id="amountEdit">
+                            <input type="number" class="form-control" id="amountEdit" min="1">
                         </div>   
                         <div class="mb-3">
                             <label for="priceEdit" class="form-label"> Price: </label>
-                            <input type="number" class="form-control" id="priceEdit">
+                            <input type="number" class="form-control" id="priceEdit" min="0">
                         </div>
                     </form>
                 </div>
@@ -105,6 +104,7 @@
         </article>
     </section>
 
+    <!-- MODAL TO CREATE A NEW ITEM -->
     <section class="modal fade" style="z-index: 1100;" id="createNewItem" tabindex="-1">
         <article class="modal-dialog">
             <div class="modal-content">
@@ -148,21 +148,13 @@
           <h5 class='modal-title' id='listContentTitle'> </h5>
           <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
         </div>
-        <div class='modal-body'>
+        <div class='modal-body' style="padding: 0 1%;">
                 <div class="col-md-12">
-                    <table id="item-table" class="table text-center table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Product</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="itemsHere">
-
-                        </tbody>
+                    <table id="item-table" style="width: 100%;" class="table text-center table-striped">
                     </table>
+                    <div class="text-center" id="itemsHere">
+
+                    </div>
                 </div>
             <article id='noItems' class='text-center'>
 
@@ -178,7 +170,7 @@
             </article>
         </div>
         <div class='modal-footer'>
-          <button type='button' class='btn btn-Clean btn-warning' data-bs-dismiss='modal'>Clean List</button>
+          <button type='button' class='btn btn-Clean btn-primary' data-bs-dismiss='modal'>Clean List</button>
           <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>Close List</button>
         </div>
       </div>
@@ -201,4 +193,3 @@
     </script>
 </body>
 </html>
-
