@@ -124,29 +124,6 @@ $( document ).ready(function() {
         saveJson(idPadre, list);
         
     });
-
-
-var elf = "elf";
-    con = `             <tr>
-    <td> <img src="./assets/img/eye.png" alt=""></td>
-    <td>Ratona</td>
-    <td>${elf}</td>
-    <td>Prosiuta</td>
-</tr>
-<tr>
-    <td><img src="./assets/img/eye.png" alt=""></td>
-    <td>Hola</td>
-    <td>Mamona</td>
-    <td>Loba</td>
-</tr>
-<tr>
-    <td><img src="./assets/img/eye.png" alt=""></td>
-    <td>Suminero</td>
-    <td>Ucorno</td>
-    <td>Lolo</td>
-</tr>`;
-$( "#aqui" ).append(con); //<- The new one first
-    //DATATABLE
     
     function showLisit(List){
         $('#noItems').addClass("d-block");
@@ -159,10 +136,13 @@ $( "#aqui" ).append(con); //<- The new one first
             $('#noItems').addClass("d-block");
             $('#noItems').removeClass("d-none");
 
+            if ( $.fn.dataTable.isDataTable( '#item-table' ) ) {
+                table.clear().destroy();
+            }
+
         } else {
             $('#noItems').addClass("d-none");
             $('#noItems').removeClass("d-block");
-
             pintItems(List);
         }
 
@@ -180,6 +160,8 @@ $( "#aqui" ).append(con); //<- The new one first
 
     $("#btn-newItem").on("click", function(e){
         e.preventDefault();
+        hideErrorImputs();
+
         let idList = $("#btn-newItem").attr("data-id");
 
         let productName = $("#productName").val();
@@ -195,7 +177,7 @@ $( "#aqui" ).append(con); //<- The new one first
             return;
         }
 
-        if (amount <= 0 && amount >= 20){
+        if (amount <= 0 || amount > 20 || isNaN(amount)){
             $("#amount").addClass("error");
             $("#errorAmount").show();
             $("#amount").focus();
@@ -246,7 +228,25 @@ $( "#aqui" ).append(con); //<- The new one first
     });
 
 
-    function editItem(idProduct, idList, name, amount, price,){
+    function editItem(idProduct, idList, name, amount, price){
+        $("#amountEdit").removeClass("error");
+        $("#priceEdit").removeClass("error");
+        if(amount <= 0 ){
+            $("#amountEdit").addClass("error");
+            $("#amountEdit").focus();
+
+            toastr["error"]("Yo cannot put 0 or a negative amount .");
+            return;
+        }
+
+        if(price < 0){
+            $("#priceEdit").addClass("error");
+            $("#priceEdit").focus();
+            toastr["error"]("You cannot put a negative price. If you don't know the price, you can put 0 or empty.");
+
+            return;
+        }
+
         var father = LISTS.find(element => element.getId() === idList);
         var product = father.getItem().find(product => product.getId() === idProduct);
         
@@ -259,7 +259,7 @@ $( "#aqui" ).append(con); //<- The new one first
         }
 
         if(product.getPrice() !== price){
-            product.setPrice(price);
+            product.setPrice(parseFloat(price));
         }
         //Update new dates
         saveJson(idList, father); 
@@ -267,7 +267,7 @@ $( "#aqui" ).append(con); //<- The new one first
     }
     
     //This function will create a Item
-    function createItem(name, amount, idList, prices){
+    function createItem(name, amount, idList, prices){       
         var perc; 
         var auxP = 0;
         var img;
@@ -285,6 +285,10 @@ $( "#aqui" ).append(con); //<- The new one first
         if(prices != 0){
             price = prices;
         }
+        if(img === '' || img === undefined){
+            img = "https://cdn-icons-png.flaticon.com/512/1312/1312307.png";
+        }
+
         for(var i = 0; i< LISTS.length; i++){
             if(LISTS[i].getId() === idList){
                 LISTS[i].newItem(new Item(name, amount, img, hashGenerator(), idList, price));
@@ -299,26 +303,91 @@ $( "#aqui" ).append(con); //<- The new one first
     function pintItems(List){
         $("#itemsHere").empty();
         var totalPrice = 0;
-        List.getItem().forEach(item => {
-            totalPrice += (item.getPrice() * item.getAmount());
-            var column = `<tr class='btn-itemInList' data-id='${item.getId()}' data-id-father='${item.getFatherId()}'`;
-            if(item.getImg() != undefined){
-                column += `><td style='background-image: url(${item.getImg()}); padding: 0.5%; background-repeat: no-repeat; background-size: contain; background-position: center;'>`;
-                
-            } else {
-                column += `><td style='background-image: url(https://cdn-icons-png.flaticon.com/512/1312/1312307.png); padding: 0.5%; background-repeat: no-repeat; background-size: contain; background-position: center;'>`;
-            }
-            column += `</td><td class='productAccess' data-id='${item.getId()}' data-id-father='${item.getFatherId()}'> ${item.getName()} </td><td> ${item.getAmount()}   
-            </td><td><img id='iconEye' src='./assets/img/eye.png' alt='Check Icon'><img id='iconCheck' class='d-none' src='./assets/img/check.png' alt='Check Icon'></td></tr>`;
+        var itemsNotPrice ="";
 
-            $( "#itemsHere" ).append(column); //<- The new one first
-        }); 
-        var finalRow = `<tr class='table-info'><td></td><td colspan='2'>Total Products: </td><td>${List.getItem().length}</td></tr>`;
-        var priceRow = `<tr class='table-primary' ><td></td><td  colspan='2' >Approximate price: </td><td>$${totalPrice.toFixed(2)}</td></tr>`;
+        if ( $.fn.dataTable.isDataTable( '#item-table' ) ) {
+            table.clear().destroy();
+        }
+        table = $('#item-table').DataTable({
+            paging: false,
+            "bInfo" : false,
+            data: List.getItem(),
+            'createdRow': function (row, data, rowIndex, cells) {
+                totalPrice += (data.getPrice() * data.getAmount());
+                if(data.getPrice() === 0){
+                    itemsNotPrice += " "+data.getName();
+                    $(row).addClass("btn-itemInList bg-warning");
+                } else {
+                    $(row).addClass("btn-itemInList");
+                }
+                $(row).attr("data-id", data.getId());
+                $(row).attr("data-id-father", data.getFatherId());
+                $(cells[0]).attr("style", `background-image: url(${data.getImg()}); padding: 0.5%; background-repeat: no-repeat; background-size: contain; background-position: center;`);
+                
+                $(cells[1]).attr("data-id", data.getId());
+                $(cells[1]).attr("data-id-father", data.getFatherId());
+
+            },
+            columns: [
+                {
+                    data: "img",
+                    render: function (data, type, row) {
+                        return  ;
+                    },
+                    className: "img",
+                    defaultContent: "",
+                    title: "#"
+                },
+                {
+                    data: "name",
+                    render: function ( data, type, row ){
+                        return `<td class='productAccess' data-id='${row.getId()}' data-id-father='${row.getFatherId()}'> ${row.getName()} </td>`;
+                    },
+                    defaultContent: "",
+                    className: "productAccess",
+                    title: "Name"
+                },
+                { data: 'amount', title: "Amount" },
+                {
+                    data: "",
+                    render: function () {
+                        return "<img id='iconEye' src='./assets/img/eye.png' alt='Check Icon'><img id='iconCheck' class='d-none' src='./assets/img/check.png' alt='Check Icon'>";
+
+                    },
+                    defaultContent: "No image",
+                    title: "Status"
+                }
+            ],    
+            "columnDefs": [
+                    { "orderable": false, "targets": [0, 3] },
+                ]
+        });
+        var finalRow = `<div class='table-info text-center row bg-info' style='justify-content: center;'>
+                            <div style='width: 70%; text-align: right;'>
+                                Total Products: 
+                            </div>
+                            <div style='width: 10%; text-align: right;'>
+                                ${List.getItem().length}
+                            </div>
+                        </div>
+                        <div class='table-info text-center row bg-primary' style='justify-content: center;'>
+                            <div style='width: 70%;'>
+                                Approximate price: 
+                            </div>
+                            <div style='width: 10%;'>
+                                $${totalPrice.toFixed(2)}
+                            </div>
+                        </div>`;
         $( "#itemsHere" ).append(finalRow); //<- The new one first
-        $( "#itemsHere" ).append(priceRow); //<- The new one first
-               
+       
+
+        if(List.getItem().find(item => item.getPrice() === 0) !== undefined){
+            toastr["warning"]("Some products on your list don't have price:"+ itemsNotPrice+ ". Check the products before getting total price.");
+        }
+       
+        return;
     }
+
     
     function dropList(id){
         for(var i = 0; i <= LISTS.length -1; i++) {
@@ -461,5 +530,4 @@ $( "#aqui" ).append(con); //<- The new one first
         });
         return ob;
     }
-
 });
