@@ -366,12 +366,12 @@ $( document ).ready(function() {
                             <div style='width: 70%; text-align: right;'>
                                 Total Products: 
                             </div>
-                            <div style='width: 10%; text-align: right;'>
+                            <div style='width: 10%;'>
                                 ${List.getItem().length}
                             </div>
                         </div>
                         <div class='table-info text-center row bg-primary' style='justify-content: center;'>
-                            <div style='width: 70%;'>
+                            <div style='width: 70%; text-align: right;'>
                                 Approximate price: 
                             </div>
                             <div style='width: 10%;'>
