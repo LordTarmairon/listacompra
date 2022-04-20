@@ -40,8 +40,9 @@ label {
     background-color: rgb(201 201 201);
 }
 table img {
-    width: 55%;
+    width: 40%;
 }
+
 /* Adding transformation when the button is active */
 #newList:active {
     transform: scale(0.98);
@@ -55,4 +56,10 @@ table img {
 .disabled {
     background-color: grey;
     opacity: 30%;
+}
+
+.table-info{
+    width: 100%;
+    margin: auto;
+    padding: 2%;
 }
